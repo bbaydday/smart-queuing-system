@@ -1,0 +1,22 @@
+token,name,contact,age,gender,patient_type,position,service_time
+T-1,Mg Mg,0996688776,34,Male,New,0,8.17
+T-2,Su Su,09766543568,24,Female,New,0,12.23
+T-3,Aung Kyaw,09766219491,33,Male,New,0,15.03
+T-4,Htun Lin,0996682276,34,Male,New,0,11.02
+T-5,Su Nyein,09766542268,24,Female,New,0,8.05
+T-6,Aung Kaung San,09766339491,37,Male,New,0,17.15
+T-7,Min Maw Lin,0996638776,31,Male,New,0,11.57
+T-8,Su Sandar Hlaing,09766545568,24,Female,New,0,13.05
+T-9,Aung lin,09766219431,39,Male,New,0,6.15
+T-10,Nyunt Mg,0996612476,47,Male,New,0,8.57
+T-11,Su Yi,09766543568,67,Female,New,0,14.05
+T-12,Nyi Nyi Aung,09977219491,33,Male,New,0,4.15
+T-13,Paing Min Kyaw,0996353476,31,Male,New,0,11.57
+T-14,Nan Hanna,09766587568,34,Female,New,0,4.05
+T-15,Thant Zin,09766266491,63,Male,New,0,8.15
+T-16,Htin Mg Win,0996688336,64,Male,New,0,11.57
+T-17,Mee Mee Khaing,09766223568,14,Female,New,0,4.05
+T-18,Aung Min Khaing,09766244491,33,Male,New,0,6.15
+T-19,Mg Nyunt,0996688776,74,Male,New,0,4.57
+T-20,Su Lu Lu,09766544368,24,Female,New,0,9.05
+T-21,Aung Naing,097662491,33,Male,Follow Up,0,4.15

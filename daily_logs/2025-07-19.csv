@@ -1,0 +1,5 @@
+token,name,contact,age,gender,patient_type,disease_type,position,service_time
+T-2,aslna,23,23,Male,New,Influenza,0,0.32
+T-1,aknsl,asf,23,Male,New,Influenza,0,1.97
+T-3,asnfa,34,33,Male,New,Influenza,0,1.02
+T-4,akfla,33,11,Male,New,Influenza,0,0.24
