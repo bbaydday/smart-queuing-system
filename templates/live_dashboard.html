@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🏥 ABC Clinic - Live Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f5f6fa; font-family: 'Segoe UI', sans-serif; }
+    .box { padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+    .now-serving { background: #dff9fb; color: #130f40; font-size: 24px; }
+    .be-ready { background: #f6e58d; color: #7f8c8d; font-size: 20px; }
+    .countdown { font-size: 20px; font-weight: bold; color: #27ae60; }
+    .skipped { color: #c0392b; }
+  </style>
+</head>
+<body class="container py-4">
+
+  <h2 class="text-center mb-4">🏥 ABC Clinic - Live Queue Display</h2>
+
+  <div id="now-serving" class="box now-serving text-center">Now Serving: ---</div>
+  <div id="be-ready" class="box be-ready text-center">Be Ready: ---</div>
+  <div id="countdown" class="text-center countdown"></div>
+
+  <div class="box bg-white">
+    <h5>📋 Upcoming Tokens</h5>
+    <div id="upcoming-tokens">Loading...</div>
+  </div>
+
+  <div class="box bg-white">
+    <h5 class="skipped">⚠️ Skipped Tokens</h5>
+    <div id="skipped-tokens">None</div>
+  </div>
+
+  <div class="text-center mt-4 p-3 bg-light border">🔊 Please listen carefully for your token number...</div>
+
+  <script>
+    let currentReadyToken = null;
+    let readyStartTime = null;
+
+    async function refreshDashboard() {
+      try {
+        const [nowRes, readyRes, queueRes, skipRes] = await Promise.all([
+          fetch("/current_token"),
+          fetch("/ready_queue"),
+          fetch("/all_queue"),
+          fetch("/skipped_list"),
+        ]);
+
+        const nowServing = (await nowRes.json()).now_serving || "---";
+        const readyQueue = (await readyRes.json()).ready || [];
+        const allQueue = (await queueRes.json()).queue || [];
+        const skipped = (await skipRes.json()).skipped || [];
+
+        document.getElementById("now-serving").textContent = "Now Serving: " + nowServing;
+
+        if (readyQueue.length > 0) {
+          const readyToken = readyQueue[0].token || readyQueue[0];
+          if (readyToken === nowServing) {
+            document.getElementById("be-ready").textContent = "Be Ready: ---";
+            resetCountdown();
+          } else {
+            document.getElementById("be-ready").textContent = "Be Ready: " + readyToken;
+            if (currentReadyToken !== readyToken) {
+              currentReadyToken = readyToken;
+              readyStartTime = Date.now();
+              updateCountdown();
+            }
+          }
+        } else {
+          document.getElementById("be-ready").textContent = "Be Ready: ---";
+          resetCountdown();
+        }
+
+        const upcoming = allQueue.slice(0, 5).map(e => e.token || e);
+        document.getElementById("upcoming-tokens").textContent =
+          upcoming.length > 0 ? "• " + upcoming.join("    • ") : "No upcoming tokens";
+
+        const skippedList = skipped.map(e => e.token || e);
+        document.getElementById("skipped-tokens").textContent =
+          skippedList.length > 0 ? "• " + skippedList.join("    • ") : "No skipped tokens";
+
+      } catch (e) {
+        console.error("[ERROR] Unable to fetch:", e);
+        document.getElementById("now-serving").textContent = "Now Serving: --- (Offline)";
+        document.getElementById("be-ready").textContent = "Be Ready: ---";
+        document.getElementById("upcoming-tokens").textContent = "Server offline or unreachable.";
+        document.getElementById("skipped-tokens").textContent = "---";
+        document.getElementById("countdown").textContent = "Connection lost";
+        resetCountdown();
+      }
+
+      setTimeout(refreshDashboard, 5000); // Refresh every 5s
+    }
+
+    function updateCountdown() {
+      if (!readyStartTime || !currentReadyToken) return;
+      const elapsed = Math.floor((Date.now() - readyStartTime) / 1000);
+      const remaining = Math.max(0, 50 - elapsed);
+      const countdownEl = document.getElementById("countdown");
+
+      if (remaining > 0) {
+        countdownEl.textContent = `⏳ Please arrive in: ${remaining} sec`;
+        countdownEl.style.color = "#27ae60";
+        setTimeout(updateCountdown, 1000);
+      } else {
+        countdownEl.textContent = "⏱ Time Up!";
+        countdownEl.style.color = "#c0392b";
+        autoSkipToken(currentReadyToken);
+        resetCountdown();
+      }
+    }
+
+    function resetCountdown() {
+      currentReadyToken = null;
+      readyStartTime = null;
+      document.getElementById("countdown").textContent = "";
+    }
+
+    async function autoSkipToken(token) {
+      try {
+        const res = await fetch("/skip_token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token })
+        });
+        if (res.ok) {
+          console.log(`[INFO] Token ${token} auto-skipped`);
+        } else {
+          console.error("[ERROR] Skip failed", res.status);
+        }
+      } catch (e) {
+        console.error("[ERROR] Auto skip failed", e);
+      }
+    }
+
+    refreshDashboard();
+  </script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Token Info - Smart Queue</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f6fa;
+      color: #2c3e50;
+      padding: 20px;
+      max-width: 420px;
+      margin: auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      background:rgba(255,255,255,0.2);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      border-radius:20px;
+    }
+    header h1 {
+      font-size: 1.8rem;
+      color: #015D67;
+      font-family:"Arial";
+      letter-spacing: 2px;
+      font-weight: Bold;
+      border-radius:20px;
+
+    }
+    .token-box {
+      background: #D5E4E6;
+      border-radius: 12px;
+      padding: 25px 30px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2),
+                  0 8px 16px rgba(0, 0, 0, 0.15),
+                  0 12px 24px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+
+    }
+    .token {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #015D67;
+      text-align: center;
+      margin-bottom: 20px;
+      background:rgba(1,93,103,0.1);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      border-radius:20px;
+
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      font-color:#015D67;
+      background:rgba(1,93,103,0.1);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+    }
+    .status-alert {
+      background-color: #27ae60;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-weight: 600;
+      border-radius: 8px;
+      display: none;
+      margin-top: 20px;
+    }
+    .status-waiting {
+      background-color:#47878E;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-weight: 600;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+  .overlay-banner {
+  position: relative;
+  max-width: 100%;
+  margin-top: 25px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.overlay-banner img {
+  width: 100%;
+  height: auto;
+  display: block;
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+  border-radius: 15px;
+}
+
+.overlay-text {
+  position: absolute;
+  bottom: 10%;
+  left: 5%;
+  right: 5%;
+  background: rgba(1,93,103, 0.7);
+  color: #fff;
+  padding: 12px 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 12px;
+  text-align: center;
+  backdrop-filter: blur(5px);
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+}
+
+</style>
+
+
+</head>
+<body style="background-image:url('clinic1.jpg')">
+
+  <header>
+    <h1>✨PulsePoint Medical</h1>
+  </header>
+
+  <div class="token-box">
+    <div class="token" id="token">{{ token }}</div>
+    <div class="info-row">
+      <div>🙎‍♂️ Name:</div>
+      <div id="name">{{ name }}</div>
+    </div>
+    <div class="info-row">
+      <div>⏳ Tokens Ahead:</div>
+      <div id="tokens_ahead">{{ tokens_ahead }}</div>
+    </div>
+    <div class="info-row">
+      <div>🕒 Estimated Wait:</div>
+      <div id="estimated_time">{{ estimated_time }} min</div>
+    </div>
+
+    <div id="alert" class="status-alert">🚀 It's your turn! Please proceed to the counter.</div>
+    <div id="waiting" class="status-waiting">⌛️ Please wait, your turn is coming soon.</div>
+
+<!--image_slide-->
+
+</div> <!-- End of token-box -->
+
+<div class="overlay-banner">
+  <img id="overlayImage" src="img1.jpg" alt="Announcement Image" />
+  <div id="overlayText" class="overlay-text">📣 လူနာအသစ်များအတွက် ၂၀% လျော့စျေး!</div>
+</div>
+
+<script>
+const images = [
+  { src: "img1.jpg", text: "📣 လူနာအသစ်များအတွက် ၂၀% လျော့စျေး!" },
+  { src: "clinic2.jpg", text: "🩺 သင့်ကျန်းမာရေးအတွက် အထူးစစ်ဆေးမှုများ" },
+  { src: "clinic3.jpg", text: "🏥 ဆေးခန်းသို့ အွန်လိုင်းနဲ့ စတင်ချိန်းဆိုမယ်" },
+];
+  let currentIndex = 0;
+const imageElement = document.getElementById("overlayImage");
+const textElement = document.getElementById("overlayText");
+
+function fadeOverlay() {
+  // Fade out
+  imageElement.style.opacity = 0;
+  textElement.style.opacity = 0;
+
+  setTimeout(() => {
+    // Change image and text
+    currentIndex = (currentIndex + 1) % images.length;
+    imageElement.src = images[currentIndex].src;
+    textElement.textContent = images[currentIndex].text;
+
+    // Fade in
+    imageElement.style.opacity = 1;
+    textElement.style.opacity = 1;
+  }, 1000); // fade duration = 1s
+}
+
+setInterval(fadeOverlay, 5000); // every 5 seconds
+  </script>
+
+  <!-- Push Notification Setup -->
+  <script>
+  const tokenId = "{{ token }}";
+  const vapidPublicKey = "{{ vapid_public_key }}";
+
+  async function refreshTokenInfo() {
+    try {
+      const response = await fetch(`/token_info_json/${tokenId}`);
+      const data = await response.json();
+
+      if (data.error) {
+        document.body.innerHTML = "<h3>Token not found or expired.</h3>";
+        return;
+      }
+
+      document.getElementById("tokens_ahead").textContent = data.tokens_ahead;
+
+      const estFloat = parseFloat(data.estimated_time);
+      const mins = Math.floor(estFloat);
+      const secs = Math.round((estFloat - mins) * 60);
+      document.getElementById("estimated_time").textContent = `${mins} min ${secs} sec`;
+
+      document.getElementById("name").textContent = data.name;
+
+      const alertBox = document.getElementById("alert");
+      const waitingBox = document.getElementById("waiting");
+
+      if (data.tokens_ahead === 0) {
+        alertBox.style.display = "block";
+        waitingBox.style.display = "none";
+      } else {
+        alertBox.style.display = "none";
+        waitingBox.style.display = "block";
+      }
+    } catch (err) {
+      console.error("Failed to fetch token info:", err);
+    }
+  }
+
+  refreshTokenInfo();
+  setInterval(refreshTokenInfo, 5000);
+</script>
+
+
+  <script>
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+      const rawData = window.atob(base64);
+      const outputArray = new Uint8Array(rawData.length);
+      for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+      }
+      return outputArray;
+    }
+
+    async function initPush() {
+      if (!('serviceWorker' in navigator)) return;
+      if (!('PushManager' in window)) return;
+
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        console.warn("🚫 Notification permission denied");
+        return;
+      }
+
+      const registration = await navigator.serviceWorker.register('/service-worker.js');
+      console.log("✅ Service Worker registered");
+
+      let subscription = await registration.pushManager.getSubscription();
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+        });
+      }
+
+      const res = await fetch("/save_subscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token: tokenId,
+          subscription: subscription.toJSON()
+        })
+      });
+
+      if (res.ok) {
+        console.log("🔔 Push subscription saved");
+      } else {
+        console.error("❌ Failed to save subscription");
+      }
+    }
+
+    initPush();
+  </script>
+
+  </body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Token Info - Smart Queue</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f6fa;
+      color: #2c3e50;
+      padding: 20px;
+      max-width: 420px;
+      margin: auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    header h1 {
+      font-size: 1.8rem;
+      color: #16a085;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+    .token-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 25px 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .token {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #2980b9;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      font-size: 1rem;
+    }
+    .status-alert {
+      background-color: #27ae60;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-weight: 600;
+      border-radius: 8px;
+      display: none;
+      margin-top: 20px;
+    }
+    .status-waiting {
+      background-color: #f39c12;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-weight: 600;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .refresh-btn {
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 25px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Smart Queue System</h1>
+  </header>
+
+  <div class="token-box">
+    <div class="token" id="token">{{ token }}</div>
+    <div class="info-row">
+      <div>👤 Name:</div>
+      <div id="name">{{ name }}</div>
+    </div>
+    <div class="info-row">
+      <div>⏳ Tokens Ahead:</div>
+      <div id="tokens_ahead">{{ tokens_ahead }}</div>
+    </div>
+    <div class="info-row">
+      <div>🕒 Estimated Wait:</div>
+      <div id="estimated_time">{{ estimated_time }} min</div>
+    </div>
+
+    <div id="alert" class="status-alert">🚀 It's your turn! Please proceed to the counter.</div>
+    <div id="waiting" class="status-waiting">⌛ Please wait, your turn is coming soon.</div>
+
+    <button class="refresh-btn" onclick="refreshTokenInfo()">🔄 Refresh</button>
+  </div>
+
+  <script>
+    const tokenId = "{{ token }}";
+
+    async function refreshTokenInfo() {
+      try {
+        const response = await fetch(`/token_info_json/${tokenId}`);
+        const data = await response.json();
+
+        if (data.error) {
+          document.body.innerHTML = "<h3>Token not found or expired.</h3>";
+          return;
+        }
+
+        document.getElementById("tokens_ahead").textContent = data.tokens_ahead;
+        document.getElementById("estimated_time").textContent = data.estimated_time + " min";
+        document.getElementById("name").textContent = data.name;
+
+        const alertBox = document.getElementById("alert");
+        const waitingBox = document.getElementById("waiting");
+
+        if (data.tokens_ahead === 0) {
+          alertBox.style.display = "block";
+          waitingBox.style.display = "none";
+        } else {
+          alertBox.style.display = "none";
+          waitingBox.style.display = "block";
+        }
+      } catch (err) {
+        console.error("Failed to fetch token info:", err);
+      }
+    }
+
+    refreshTokenInfo();
+    setInterval(refreshTokenInfo, 5000);
+  </script>
+
+  <!-- Push Notification Setup -->
+  <script>
+    const vapidPublicKey = "{{ vapid_public_key }}";
+
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+        console.log("✅ Service Worker registered");
+
+        function urlBase64ToUint8Array(base64String) {
+          const padding = '='.repeat((4 - base64String.length % 4) % 4);
+          const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+          const rawData = window.atob(base64);
+          const outputArray = new Uint8Array(rawData.length);
+          for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+          }
+          return outputArray;
+        }
+
+        return registration.pushManager.getSubscription().then(function(sub) {
+          if (sub) return sub;
+          return registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+          });
+        });
+      }).then(function(subscription) {
+        console.log("🔔 Subscribed to push");
+        fetch("/save_subscription", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            token: document.getElementById("token").textContent,
+            subscription: subscription.toJSON()
+          })
+        });
+      }).catch(function(error) {
+        console.error("❌ Push setup failed:", error);
+      });
+    } else {
+      console.warn("🚫 Push messaging not supported in this browser");
+    }
+  </script>
+</body>
+</html>

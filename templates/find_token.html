@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Find Your Token</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      padding: 2rem;
+    }
+
+    .form-container {
+      max-width: 400px;
+      margin: auto;
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #015D67;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.7rem;
+      margin-bottom: 1.2rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      background-color: #27ae60;
+      color: white;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #1e874d;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>🔍 Find Your Token</h2>
+    <form method="POST">
+      <label for="phone">Enter your phone number:</label>
+      <input type="text" id="phone" name="phone" placeholder="09xxxxxxxxx"
+       required pattern="09[0-9]{7,9}" title="Enter a valid Myanmar phone number starting with 09">
+
+      <button type="submit">Find Token</button>
+    </form>
+  </div>
+
+</body>
+</html>

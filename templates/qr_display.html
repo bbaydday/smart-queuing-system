@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Queue QR Display</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Scan Your Token QR</h1>
+    <div id="qr-container">
+      <img id="qr-image" src="{{ url_for('static', filename='qr_display/latest_qr.png') }}" alt="QR Code" width="200">
+
+
+
+<!--      <img id="qr-image" src="/qr_display/latest_qr.png" alt="QR Code will appear here">-->
+    </div>
+    <p id="token-info">Waiting for new token...</p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+#qr_display.html

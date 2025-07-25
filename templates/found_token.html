@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Found Token - Smart Queue</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f6fa;
+      color: #2c3e50;
+      padding: 20px;
+      max-width: 420px;
+      margin: auto;
+    }
+    .container {
+      background: #D5E4E6;
+      border-radius: 12px;
+      padding: 25px 30px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2),
+                  0 8px 16px rgba(0, 0, 0, 0.15),
+                  0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #015D67;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 1.1rem;
+      margin: 0.5rem 0;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+      text-align: center;
+    }
+    a.button {
+      display: block;
+      margin: 2rem auto 0;
+      width: fit-content;
+      padding: 0.5rem 1rem;
+      background: #27ae60;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    {% if error %}
+      <p class="error">{{ error }}</p>
+    {% else %}
+      <h2>Token Found!</h2>
+      <p><strong>Token:</strong> {{ token.token }}</p>
+      <p><strong>Name:</strong> {{ token.user_info.name }}</p>
+      <p><strong>Phone:</strong> {{ token.user_info.contact }}</p>
+      <p><strong>Age:</strong> {{ token.user_info.age }}</p>
+      <p><strong>Gender:</strong> {{ token.user_info.gender }}</p>
+      <p><strong>Patient Type:</strong> {{ token.user_info.patient_type }}</p>
+      <p><strong>Estimated Wait Time:</strong> {{ estimated_time }} min</p>
+      <p><strong>Tokens Ahead:</strong> {{ tokens_ahead }}</p>
+      <p><a href="{{ url_for('token_info', token_id=token.token) }}">View Detailed Token Status</a></p>
+    {% endif %}
+    <a href="{{ url_for('find_token') }}" class="button">Search Again</a>
+  </div>
+
+</body>
+</html>
