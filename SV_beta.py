@@ -16,9 +16,9 @@ from pywebpush import WebPushException, webpush
 # os.getenv() ကိုသုံးဖို့ os module ကို import လုပ်ထားပြီးသားဖြစ်လို့ ထပ်လုပ်စရာမလို။
 # local မှာ test လုပ်ရင် .env file (python-dotenv နဲ့) သုံးရပါမယ်။
 # Render မှာတော့ Render dashboard ရဲ့ Environment Variables ထဲမှာ ထည့်သွင်းရပါမယ်။
-VAPID_PUBLIC_KEY = os.getenv("BFQE_SsD83A8elK3yZWwtOEvK72UupklhnrpYDIo67C3k5t3ER1hU-0V2mtJ6B6_fKw73gRYCYsNOC5PDFXXgc4")
-VAPID_PRIVATE_KEY = os.getenv("v3Ft3pCG86nc_xWveU-ZMkqdh_DPv06b4nVolljRtw8")
-VAPID_CLAIMS_SUB = os.getenv({"sub":"mailto:bdbayday988@email.com"})
+VAPID_PUBLIC_KEY = os.getenv("VAPID_PUBLIC_KEY")
+VAPID_PRIVATE_KEY = os.getenv("VAPID_PRIVATE_KEY")
+VAPID_CLAIMS_SUB = os.getenv("VAPID_CLAIMS_SUB")
 
 # ====== Application Setup ======
 # static_folder ကို root folder ကနေ static လို့ သတ်မှတ်ထားတာက Render မှာ အဆင်ပြေဆုံးပါ။
